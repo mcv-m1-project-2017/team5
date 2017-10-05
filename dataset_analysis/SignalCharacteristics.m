@@ -8,7 +8,12 @@ function [signTypeFrequency, maxSizeByType, minSizeByType, formFactorByType, fil
     %    Parameter name      Value
     %    --------------      -----
     %    'directory'         directory where the images to analize reside
-
+    
+    %directory does not exist
+    if exist(directory, 'dir') ~= 7
+        error('Directory not found \n');
+    end
+    
     files = ListFiles(directory);
 
     SignTypeIndex = 'A':'F';
@@ -63,4 +68,3 @@ function [signTypeFrequency, maxSizeByType, minSizeByType, formFactorByType, fil
     % Compute form factor (2)
     formFactorByType = formFactorByType ./ signTypeFrequency;
 end
-

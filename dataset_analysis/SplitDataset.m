@@ -12,16 +12,17 @@ function SplitDataset( signTypeFrequency, maxSizeByType, minSizeByType, formFact
 
     %directory does not exist
     if exist(directory, 'dir') ~= 7
-        error('Directory not found \n');
+        error('Directory not found');
     end
     
     files = ListFiles(directory);
     if size(files,1) == 0
-        error('Directory is empty \n');
+        error('Directory is empty');
     end
     SignTypeIndex = 'A':'F';
     TotalByType = zeros(6,1);
     average      = ( maxSizeByType + minSizeByType ) ./2;
+    %Quantity of images by type, 30% for each type
     quantity     = round(signTypeFrequency .* 0.3);
     for i=1:size(files,1)
         [annotations, Signs] = LoadAnnotations(strcat(directory, '/gt/gt.', files(i).name(1:size(files(i).name,2)-3), 'txt'));
@@ -37,6 +38,8 @@ function SplitDataset( signTypeFrequency, maxSizeByType, minSizeByType, formFact
             maskfillingRatio = sum(sum(mask(round(annotations(j).y : annotations(j).y+annotations(j).h), ...
             round(annotations(j).x : annotations(j).x+annotations(j).w))))...
             /  imgSize;
+            %Split dataset based on average, form Factor, Filling ratio and
+            %if have more than one signal by image
             if imgSize          >= average     (sIndex) - average     (sIndex) * 0.6 ...
             && imgSize          <= average     (sIndex) + average     (sIndex) * 0.6 ...
             && imgFormFactor    >= formFactor  (sIndex) - formFactor  (sIndex) * 0.6 ...
@@ -45,9 +48,12 @@ function SplitDataset( signTypeFrequency, maxSizeByType, minSizeByType, formFact
             && maskfillingRatio <= fillingRatio(sIndex) + fillingRatio(sIndex) * 0.6 ...
             && TotalByType(sIndex) <   quantity(sIndex) ...
             && size(Signs,2) == 1
+                %Increment quantity of those images type
                 TotalByType(sIndex) = TotalByType(sIndex) + 1;
+                %Select path to save image
                 path = strcat(directory, '/validation_split/', files(i).name(1:size(files(i).name,2)-3), 'jpg');
             else
+                %Select path to save image
                 path = strcat(directory, '/train_split/', files(i).name(1:size(files(i).name,2)-3), 'jpg');
             end
             imwrite(img,path);

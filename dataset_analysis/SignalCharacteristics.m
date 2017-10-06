@@ -11,7 +11,7 @@ function [signTypeFrequency, maxSizeByType, minSizeByType, formFactorByType, fil
     
     %directory does not exist
     if exist(directory, 'dir') ~= 7
-        error('Directory not found \n');
+        error('Directory not found');
     end
     
     files = ListFiles(directory);

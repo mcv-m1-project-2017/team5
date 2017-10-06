@@ -1,6 +1,6 @@
 clear;clc; close all;
-addpath(genpath('..'))
-directory = '../../DataSet';
+addpath(genpath('../..'))
+directory = '../../../DataSet';
 
 % Load file annotations and names
 [ files, fileIndex, annotations, signType ] = LoadAllFileAnnotations( strcat(directory ,'/train'));

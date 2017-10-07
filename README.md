@@ -1,15 +1,8 @@
 # icv-m1-project
 Introduction to Human and Computer Vision project
 
-
-* Use TrafficSignDetection.m as a template for your code. This functions shows hot to use the evaluation functions.
-
-* Use test_submission.m to test your results submissions to the course server 
-
-
-* Useful resources:
-  - Circle detection: circular_hough/
-  - Segmentation with UCM: segment_ucm/   (only for linux & Mac OSX. Can not be used on Windows)
-  - Color space conversion: colorspace/
-  - Evaluation (Precision, recall, etc.): evaluation/ 
-  - [Segmentation](https://es.mathworks.com/matlabcentral/fileexchange/52698-k-means--mean-shift-and-normalized-cut-segmentation) (Mean-shift, k-means, etc.): 
+WEEK 1:
+    * Folder Dataset must be exist in parent folder.
+    * TASK 1 and TASK 2: To running these tasks you must to run launch_characteristics_extraction.m script that is available in dataset_analysis folder.
+    * TASK 3: To running this task, that is in color_segmentation folder, this task are divided in algorithms, for each algorithm exist one folder, to run these algoritms you must to run file that has algoritm name like k_means.m
+    *TASK 4:

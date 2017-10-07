@@ -20,10 +20,10 @@ function SplitDataset( signTypeFrequency, maxSizeByType, minSizeByType, formFact
         error('Directory is empty');
     end
     SignTypeIndex = 'A':'F';
-    TotalByType = zeros(6,1);
-    average      = ( maxSizeByType + minSizeByType ) ./2;
+    TotalByType   = zeros(6,1);
+    average       = ( maxSizeByType + minSizeByType ) / 2;
     %Quantity of images by type, 30% for each type
-    quantity     = round(signTypeFrequency .* 0.3);
+    quantity      = round(signTypeFrequency * 0.3);
     for i=1:size(files,1)
         [annotations, Signs] = LoadAnnotations(strcat(directory, '/gt/gt.', files(i).name(1:size(files(i).name,2)-3), 'txt'));
         % Read image
@@ -33,6 +33,7 @@ function SplitDataset( signTypeFrequency, maxSizeByType, minSizeByType, formFact
         for j=1:size(Signs,2)
             % Compute signal characteristics
             sIndex = SignTypeIndex==Signs{j};
+            annotations(j).sign = Signs{j};
             imgSize       = annotations(j).w * annotations(j).h;
             imgFormFactor = annotations(j).w / annotations(j).h;
             maskfillingRatio = sum(sum(mask(round(annotations(j).y : annotations(j).y+annotations(j).h), ...
@@ -51,13 +52,19 @@ function SplitDataset( signTypeFrequency, maxSizeByType, minSizeByType, formFact
                 %Increment quantity of those images type
                 TotalByType(sIndex) = TotalByType(sIndex) + 1;
                 %Select path to save image
-                path = strcat(directory, '/validation_split/', files(i).name(1:size(files(i).name,2)-3), 'jpg');
+                path     = strcat(directory, '/validation_split/'     , files(i).name(1:size(files(i).name,2)-3), 'jpg');
+                annopath = strcat(directory, '/validation_split/gt/'  , files(i).name(1:size(files(i).name,2)-3), 'txt');
+                maskpath = strcat(directory, '/validation_split/mask/', files(i).name(1:size(files(i).name,2)-3), 'png');
             else
                 %Select path to save image
-                path = strcat(directory, '/train_split/', files(i).name(1:size(files(i).name,2)-3), 'jpg');
-            end
-            imwrite(img,path);
-        end
-    end
+                path     = strcat(directory, '/train_split/'      , files(i).name(1:size(files(i).name,2)-3), 'jpg');
+                annopath = strcat(directory, '/train_split/gt/'   , files(i).name(1:size(files(i).name,2)-3), 'txt');
+                maskpath = strcat(directory, '/train_split/mask/7', files(i).name(1:size(files(i).name,2)-3), 'png');
 
+            end
+            imwrite(img ,path     );
+            imwrite(mask,maskpath );
+        end
+        writetable(struct2table(annotations), annopath, 'WriteVariableNames', false, 'Delimiter', '\t')
+    end
 end

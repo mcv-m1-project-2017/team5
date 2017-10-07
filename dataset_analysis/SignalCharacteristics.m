@@ -1,4 +1,4 @@
-function [signTypeFrequency, maxSizeByType, minSizeByType, formFactorByType, fillingRatioByType ] = SignalCharacteristics( directory )
+function [signTypeFrequency, maxSizeByType, minSizeByType, formFactorByType, fillingRatioByType,sFrequencyPercentage ] = SignalCharacteristics( directory )
     % SignalCharacteristics
     % Determines the characteristics of the signals in the training set: max
     % and min size, form factor, filling ratio of each type of signal,
@@ -15,7 +15,10 @@ function [signTypeFrequency, maxSizeByType, minSizeByType, formFactorByType, fil
     end
     
     files = ListFiles(directory);
-
+    if size(files,1) == 0
+        error('Directory is empty');
+    end
+    
     SignTypeIndex = 'A':'F';
 
     signTypeFrequency = zeros(6,1);
@@ -43,7 +46,7 @@ function [signTypeFrequency, maxSizeByType, minSizeByType, formFactorByType, fil
                 round(annotations(j).x : annotations(j).x+annotations(j).w)))) ...
                 / signSize;
 
-            % Compute signal type appearance frequency
+            % Compute signal type appearance frequency (1)
             signTypeFrequency(sIndex) = signTypeFrequency(sIndex) + 1;
 
             % Compute max and min size
@@ -67,4 +70,7 @@ function [signTypeFrequency, maxSizeByType, minSizeByType, formFactorByType, fil
 
     % Compute form factor (2)
     formFactorByType = formFactorByType ./ signTypeFrequency;
+    
+    % Compute frequency (2)
+    sFrequencyPercentage = signTypeFrequency / size(files,1);
 end

@@ -2,7 +2,28 @@
 Introduction to Human and Computer Vision project
 
 WEEK 1:
-    * Folder Dataset must be exist in parent folder.
+* Project folder tree:
+
+   |-- Dataset
+        |-- test
+        |-- train
+            |-- gt
+            |-- mask
+            |--train_split
+                |-- gt
+                |-- mask
+                |-- MeanShift_mask
+            |--validation_split
+                |-- gt
+                |-- mask
+    |-- circular_hough
+    |-- colorspace
+    |-- evaluation
+    |-- dataset_analysis
+    |-- color_segmentation
+        |-- k_means
+        |-- Mean_Shift
+        |-- k_means_ycbcr
     
     * TASK 1 and TASK 2: To running these tasks you must to run launch_characteristics_extraction.m script that is available in dataset_analysis folder.
     

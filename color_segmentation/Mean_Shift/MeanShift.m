@@ -30,7 +30,7 @@ for i=1:size(files,1)
     Mask = zeros(n,m);
     for i = 1:n
         for j = 1:m
-            if Ims(i,j) > 0.15 && Ims(i,j) < 0.3
+            if ( Ims(i,j) >= 0.15 && Ims(i,j) <= 0.45 )
                 Mask(i,j) = 1;
             end
         end
@@ -38,6 +38,7 @@ for i=1:size(files,1)
     imwrite(Mask,path);
     e = e + cputime-t;
 end
+%Time average
 e / size(files,1)
 
 

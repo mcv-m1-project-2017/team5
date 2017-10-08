@@ -1,15 +1,15 @@
 function [Ims Kms] = Ms(I,bandwidth)
-    % LoadAllFileAnnotations
-    % Loads all the annotations of the files in the dataset.
+    % Ms
+    % Mean shift algorithm.
     %
     %    Parameter name      Value
     %    --------------      -----
     %    'I'                 Image to apply Mean Shift algorithm
     %    'bandwidth'         Cluster windows size
-    %% Mean Shift Segmentation (option: bandwidth)
+    % Mean Shift Segmentation (option: bandwidth)
     I = im2double(I);
     X = reshape(I,size(I,1)*size(I,2),3);                                         % Color Features
-    %% MeanShift
+    % MeanShift
     [clustCent,point2cluster,clustMembsCell] = MeanShiftCluster(X',bandwidth);    % MeanShiftCluster
     for i = 1:length(clustMembsCell)                                              % Replace Image Colors With Cluster Centers
         X(clustMembsCell{i},:) = repmat(clustCent(:,i)',size(clustMembsCell{i},2),1); 

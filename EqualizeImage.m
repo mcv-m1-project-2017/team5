@@ -1,10 +1,12 @@
-function [equalized_im] = equalize_image(im)
+function [equalized_im] = EqualizeImage(im)
     % equalize_image 
     % Perform histogram equalization for each of the bands of the image.
     %    Parameter name      Value
     %    --------------      -----
     %    'im'               image to equalize
-
+    
+    im = uint8(im);
+    
     %Split the 3 bands of the color image
     eq1 = im(:,:,1);
     eq2 = im(:,:,2);

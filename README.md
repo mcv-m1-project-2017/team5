@@ -25,8 +25,10 @@ WEEK 1:
         |-- Mean_Shift
         |-- k_means_ycbcr
     
-    * TASK 1 and TASK 2: To running these tasks you must to run launch_characteristics_extraction.m script that is available in dataset_analysis folder.
+    * TASK 1 and TASK 2: To run these tasks you must to run launch_characteristics_extraction.m script that is available in dataset_analysis folder.
     
     * TASK 3: To run this task (that is in color_segmentation folder) you must to run algorithms scripts that has algorithm name like k_means.m, these scripts has folder for each one.
     
-    *TASK 4:
+    * TASK 4: Run launch_detection.m with mask path in order to obtain performance evaluation.
+    
+    * TASK 5: Use EqualizeImage(Img) function in order to obtain a equalize image.

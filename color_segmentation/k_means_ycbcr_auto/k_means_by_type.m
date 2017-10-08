@@ -100,7 +100,7 @@ for t=1:6
     [geom_mean,bestl1] = max(geom_mean);
     [geom_mean, bestl2] = max(geom_mean);
     bestl1 = bestl1(bestl2);
-    fprintf('\nBest lambdas l1=%.2f | l2=%.2f with geom. mean %f', ...
+    fprintf('\nBest lambdas l1=%.2f | l2=%.2f with geom. mean %f\n', ...
         lambdavalues(bestl1), lambdavalues(bestl2),geom_mean); 
     
     % Compute best range

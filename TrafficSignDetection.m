@@ -104,8 +104,21 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
     im=double(im);
 
     switch space
-        case 'normrgb'
-            pixelCandidates = im(:,:,1)>100;
+        case 'normrgb'           
+            im = rgb2ycbcr(im);
+            K = 2;
+            minvalues = [103.2170  139.6656; 139.8094   94.9181];
+            maxvalues = [122.7109  177.4587; 171.6996  122.7452];
+            
+            % Segment
+            pixelCandidates = zeros(size(im,1),size(im,2));
+            for k=1:K
+                segmentedimK = ones(size(im,1),size(im,2));
+                for c=1:2
+                    segmentedimK = segmentedimK & im(:,:,c+1)>minvalues(k,c) & im(:,:,c+1)<=maxvalues(k,c);
+                end
+                pixelCandidates = pixelCandidates | segmentedimK;
+            end
             
         otherwise
             error('Incorrect color space defined');

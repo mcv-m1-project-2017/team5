@@ -12,11 +12,15 @@ function [ minvalues, maxvalues ] = ComputeSegmentationParameters( centroids, K,
     
     minvalues = zeros(K,size(centroids,2));
     maxvalues = zeros(K,size(centroids,2));
+    
+    if length(lambda)==1
+        lambda = ones(K,1)*lambda;
+    end
 
     for k=1:K
         stdval = std(pixelDataset(idx==k,2:3));
-        minvalues(k,:) = centroids(k,:) - lambda * stdval;
-        maxvalues(k,:) = centroids(k,:) + lambda * stdval;
+        minvalues(k,:) = centroids(k,:) - lambda(k) * stdval;
+        maxvalues(k,:) = centroids(k,:) + lambda(k) * stdval;
     end
 end
 

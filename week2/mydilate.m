@@ -17,7 +17,7 @@ function [ imdilated ] = mydilate(im, se)
     %flip se
     se = se(end:-1:1,end:-1:1);
     se_center = size(se) - (se_center-1);
-    
+
     for k=1:chan
         for i=1:rows
             for j=1:col
@@ -34,6 +34,5 @@ function [ imdilated ] = mydilate(im, se)
             end
         end
     end    
-    imdilated = cast(imdilated, 'like',im);
 end
 

@@ -13,24 +13,25 @@
 %             0, 1, 5, 0, 0, 0;
 %             0, 0, 0, 0, 0, 0;]);
         
-% im = imread('morph_test.png');
+%im = imread('morph_test.png');
+im = imread('DilationErosionTest.png');
 % im = rgb2gray(imread('foto_carnet.jpg'));
 % im = imread('foto_carnet.jpg');
-im = rgb2gray(imread('00.005893.jpg'));
-% im = imread('00.005893.jpg');
+%im = rgb2gray(imread('00.005893.jpg'));
+%im = imread('00.005893.jpg');
 
-% figure,imshow(im,[]);
+figure,imshow(im,[]);
 
 % Diferent Structural Elements to test
 % se = [1 1 1;
 %       0 1 0];
 
-% se = [0 1 0;
-%       1 1 1;
-%       0 1 0];
+ se = [0 1 0;
+       1 1 1;
+       0 1 0];
   
 % se = [1 1 1 1 1 1 1];
-se = ones(20);
+%se = ones(20);
 % se = ones(20,1);
 % se = ones(1, 20);
   
@@ -57,6 +58,18 @@ subplot(2,3,3), imshow(mydil-dil,[]), title('difference');
 subplot(2,3,4), imshow(myero,[])    , title('myerode');
 subplot(2,3,5), imshow(ero,[])      , title('imerode');
 subplot(2,3,6), imshow(myero-ero,[]), title('difference');
+
+
+opening = myOpeningClosing(im, se, 0);
+closing = myOpeningClosing(im, se, 1);
+topHat = myTopHat(im, se, 0);
+topHatDual = myTopHat(im, se, 1);
+
+figure,
+subplot(2,2,1), imshow(opening,[]), title('Opening');
+subplot(2,2,2), imshow(closing,[]), title('Closing');
+subplot(2,2,3), imshow(topHat,[]), title('Top Hat');
+subplot(2,2,4), imshow(topHatDual,[]), title('Top Hat Dual');
 
 fprintf('dilate : %f\n', mydil_time/dil_time);
 

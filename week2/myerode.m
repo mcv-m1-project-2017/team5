@@ -25,7 +25,7 @@ function [ imeroded ] = myerode(im, se)
                 idx_x = [i-(se_center(1)-1), i+(se_sz_x-se_center(1))];
                 idx_y = [j-(se_center(2)-1), j+(se_sz_y-se_center(2))];
                 
-                region = im(idx_x(1):idx_x(2), idx_y(1):idx_y(2));
+                region = im(idx_x(1):idx_x(2), idx_y(1):idx_y(2),k);
                 imeroded(i,j,k) = min(min(region(se>0)));  
             end
         end

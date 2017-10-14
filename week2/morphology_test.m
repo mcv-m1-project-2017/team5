@@ -15,9 +15,9 @@
         
 % im = imread('morph_test.png');
 % im = imread('DilationErosionTest.png');
-im = imread('cameraman.tif');
+% im = imread('cameraman.tif');
 %im = rgb2gray(imread('00.005893.jpg'));
-%im = imread('00.005893.jpg');
+im = imread('00.005893.jpg');
 
 % figure,imshow(im,[]);
 
@@ -35,7 +35,7 @@ se = ones(20,2);
 % se = ones(1, 20);
   
 tic
-mydil = mydilate2(im,se);
+mydil = mydilate_simple(im,se);
 mydil_time = toc;
 
 tic
@@ -43,7 +43,7 @@ dil = imdilate(im,se);
 dil_time = toc;
 
 tic
-myero = myerode2(im,se);
+myero = myerode_simple(im,se);
 myero_time = toc;
 
 tic

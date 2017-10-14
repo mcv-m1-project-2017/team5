@@ -23,8 +23,7 @@ function [ imdilated ] = mydilate(im, se)
     se_center = size(se) - (se_center-1);
     
       
-    for k=1:chan
-        
+    for k=1:chan        
         %Image center
         for i=se_center(1):(rows-se_center(1)+1)
             for j=se_center(2):(col-se_center(2)+1)
@@ -32,7 +31,7 @@ function [ imdilated ] = mydilate(im, se)
                 idx_x = [i-(se_center(1)-1), i+(se_sz_x-se_center(1))];
                 idx_y = [j-(se_center(2)-1), j+(se_sz_y-se_center(2))];
                 
-                region = im(idx_x(1):idx_x(2), idx_y(1):idx_y(2));
+                region = im(idx_x(1):idx_x(2), idx_y(1):idx_y(2),k);
                 imdilated(i,j,k) = max(max(region(se>0)));  
             end
         end

@@ -35,7 +35,7 @@ se = ones(20,2);
 % se = ones(1, 20);
   
 tic
-mydil = mydilate_simple(im,se);
+mydil = mydilate(im,se);
 mydil_time = toc;
 
 tic
@@ -43,7 +43,7 @@ dil = imdilate(im,se);
 dil_time = toc;
 
 tic
-myero = myerode_simple(im,se);
+myero = myerode(im,se);
 myero_time = toc;
 
 tic

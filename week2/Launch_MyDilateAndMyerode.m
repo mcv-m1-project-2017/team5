@@ -9,10 +9,10 @@ img = imread(strcat(directory, '/lenna.jpg'));
 
 %DILATE
 %Create SE
-se = strel('cube', 10 );
+se = ones(10);
 %Launch imdilate and mydilate
 dilateImg   = imdilate(img,se);
-MyDilateImg = mydilate(img,[10,10]);
+MyDilateImg = mydilate(img,se);
 %Save Dilate
 imwrite(dilateImg ,strcat(directory, '/lenna_dilate.jpg') );
 %Save MyDilate
@@ -25,7 +25,7 @@ imwrite(Diff      ,strcat(directory, '/lenna_dilate_differences.jpg') );
 %ERODE
 %Launch imdilate and mydilate
 erodeImg   = imerode(img,se);
-MyErodeImg = myerode(img,[10,10]);
+MyErodeImg = myerode(img,se);
 %Save Dilate
 imwrite(erodeImg ,strcat(directory, '/lenna_erode.jpg') );
 %Save MyDilate

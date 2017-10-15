@@ -76,6 +76,6 @@ fprintf('mydilate : %f sec\n', mydil_time);
 fprintf('efficency : %f %%\n', 100*(mydil_time/dil_time));
 fprintf('\n');
 fprintf('imerode : %f sec\n', ero_time);
-fprintf('efficency : %f sec\n', myero_time);
-fprintf('erode : %f %%\n', 100*(myero_time/ero_time));
+fprintf('myerode : %f sec\n', myero_time);
+fprintf('efficency : %f %%\n', 100*(myero_time/ero_time));
 fprintf('\n');

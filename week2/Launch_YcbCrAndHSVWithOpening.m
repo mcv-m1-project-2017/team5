@@ -30,6 +30,10 @@ pF1          = zeros(k,size(seList,2));
 pRecall      = zeros(k,size(seList,2));
 pSpecificity = zeros(k,size(seList,2));
 pSensitivity = zeros(k,size(seList,2));
+TP           = zeros(k,size(seList,2));
+FP           = zeros(k,size(seList,2));
+TN           = zeros(k,size(seList,2));
+FN           = zeros(k,size(seList,2));
 time         = 0;
 for x=1:k
     for i=1:length(seList)
@@ -95,6 +99,10 @@ for x=1:k
             % stop timer and store required time to create the current mask
             time =  time + toc; 
         end
+        TP(x,i) = pixelTP;
+        FP(x,i) = pixelFP;
+        TN(x,i) = pixelTN;
+        FN(x,i) = pixelFN;
         % calculate performance measures
         pPrecision  (x,i) = pixelTP    / (pixelTP+pixelFP);
         pAccuracy   (x,i) = (pixelTP+pixelTN) / (pixelTP+pixelFP+pixelFN+pixelTN);

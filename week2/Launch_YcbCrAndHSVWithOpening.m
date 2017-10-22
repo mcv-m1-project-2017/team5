@@ -81,10 +81,10 @@ for x=1:k
                     %Hole filling
                     FinalMask  = imfill(topHatMask,'holes');
                 otherwise
-                    error('Not stament found');
+                    error('Invalid bound stament');
             end
             %Create path
-            maskpath = strcat(directory, '/YcbCrAndHSV_mask/',num2str(x),'_',num2str(i),'/',files(j).name(1:size(files(j).name,2)-3), 'png');
+            maskpath = strcat(directory, '/YcbCrAndHSV_mask/',num2str(x),'_',num2str(i),'/mask.',files(j).name(1:size(files(j).name,2)-3), 'png');
             imwrite(FinalMask,maskpath );
             %Read current mask
             oriMask = imread(strcat(directory, '/mask/mask.',files(j).name(1:size(files(j).name,2)-3), 'png'));

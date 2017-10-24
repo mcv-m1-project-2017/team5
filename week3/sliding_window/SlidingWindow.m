@@ -1,6 +1,9 @@
-function [ uniqueWindowCandidates ] = SlidingWindow( im, window_w, window_h,filling_ratio,joining_threshold,jump_interval)
+function [ uniqueWindowCandidates ] = SlidingWindow( im, window_w_maxmin, window_h_maxmin,filling_ratio,joining_threshold,jump_interval)
 
 [rows,cols] = size(im);
+nSizes = 6;
+window_w_vector = round(linspace(window_w_maxmin(1),window_w_maxmin(2),nSizes));
+window_h_vector = round(linspace(window_h_maxmin(1),window_h_maxmin(2),nSizes));
 
 % Search for candidates
 windowCandidates=[];
@@ -8,15 +11,32 @@ windowIdentifiers = [];
 referenceWindows = [struct('x',-Inf,'y',-Inf,'w',0,'h',0)]; % Added to always have a reference
 window_idx = 0;
 
-
-
-for i=1:jump_interval:rows-window_h+1
-    for j=1:jump_interval:cols-window_w+1
-        % Compute window's frame rate
-        window = im(i:i+window_h-1,j:j+window_w-1);
-        window_fr = sum(window(:))/(window_h*window_w);
+for i=1:jump_interval:rows-window_h_maxmin(2)+1
+    for j=1:jump_interval:cols-window_w_maxmin(2)+1
+        % Try different window sizes
+        last_window_fr = -Inf;
+        for s=1:nSizes
+            window_w = window_w_vector(s);
+            window_h = window_h_vector(s);
+            
+            desp_w = (window_w_maxmin(2)-window_w)/2-1;
+            desp_h = (window_h_maxmin(2)-window_h)/2-1;
+            
+            % Compute window's filling rate
+            window = im(i+desp_h:i+desp_h+window_h-1,j+desp_w:j+desp_w+window_w-1);
+            window_fr = sum(window(:))/(window_h*window_w); 
+            
+            if window_fr<filling_ratio
+                break
+            end
+            last_window_fr = window_fr;
+        end
+        if window_fr<filling_ratio && s>1
+            window_w = window_w_vector(s-1);
+            window_h = window_h_vector(s-1);
+        end
         
-        if  window_fr >= filling_ratio
+        if  last_window_fr >= filling_ratio
             % Look for another similar window
             sameWindow =    ([referenceWindows.x] - window_w*joining_threshold <= j ...
                                 & [referenceWindows.x] + window_w*joining_threshold >= j) ...
@@ -47,7 +67,8 @@ for idx = uniqueWindowIdentifiers
     uniqueWindowCandidates = [uniqueWindowCandidates ...
         struct('x',mean([windowCandidates(windowIdentifiers==idx).x]),...
         'y',mean([windowCandidates(windowIdentifiers==idx).y]),...
-        'w',window_w,'h',window_h)];
+        'w',mean([windowCandidates(windowIdentifiers==idx).w]),...
+        'h',mean([windowCandidates(windowIdentifiers==idx).h]))];
 end
 
 end

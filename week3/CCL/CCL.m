@@ -81,18 +81,18 @@ function CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showIma
         windowFP = windowFP + localWindowFP;
         time =  time + toc; 
     end
-        pPrecision   = pixelTP    / (pixelTP+pixelFP);
-        pAccuracy    = (pixelTP+pixelTN) / (pixelTP+pixelFP+pixelFN+pixelTN);
-        pSpecificity = pixelTN    / (pixelTN+pixelFP);
-        pSensitivity = pixelTP    / (pixelTP+pixelFN);
-        pF1          = 2*(pixelTP)/(2*pixelTP+pixelFN+pixelFP);
-        pRecall      = pixelTP    / (pixelTP+pixelFN);
-        
-        pPrecisionw   = windowTP    / (windowTP+windowFP);
-        pAccuracyw    = windowTP / (windowTP+windowFP+windowFN);
-        pSensitivityw = windowTP    / (windowTP+windowFN);
-        pF1w          = 2*(windowTP)/(2*windowTP+windowFN+windowFP);
-        pRecallw      = windowTP    / (windowTP+windowFN);
+    pPrecision   = pixelTP    / (pixelTP+pixelFP);
+    pAccuracy    = (pixelTP+pixelTN) / (pixelTP+pixelFP+pixelFN+pixelTN);
+    pSpecificity = pixelTN    / (pixelTN+pixelFP);
+    pSensitivity = pixelTP    / (pixelTP+pixelFN);
+    pF1          = 2*(pixelTP)/(2*pixelTP+pixelFN+pixelFP);
+    pRecall      = pixelTP    / (pixelTP+pixelFN);
+
+    pPrecisionw   = windowTP    / (windowTP+windowFP);
+    pAccuracyw    = windowTP / (windowTP+windowFP+windowFN);
+    pSensitivityw = windowTP    / (windowTP+windowFN);
+    pF1w          = 2*(windowTP)/(2*windowTP+windowFN+windowFP);
+    pRecallw      = windowTP    / (windowTP+windowFN);
     % Average time per frame
     txf = time / length(files) ; 
 end

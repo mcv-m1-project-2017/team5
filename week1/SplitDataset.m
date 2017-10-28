@@ -38,7 +38,7 @@ function SplitDataset( signTypeFrequency, maxSizeByType, minSizeByType, formFact
     %Quantity of images by type, 30% for each type
     quantity      = round(signTypeFrequency * 0.3);
     %suffle files vector
-    files(randperm(length(files)));
+    files=files(randperm(length(files)));
     for i=1:size(files,1)
         [annotations, Signs] = LoadAnnotations(strcat(directory, '/gt/gt.', files(i).name(1:size(files(i).name,2)-3), 'txt'));
         % Read image

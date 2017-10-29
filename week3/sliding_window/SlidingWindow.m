@@ -19,12 +19,12 @@ for i=1:jump_interval:rows-window_h_maxmin(2)+1
             window_w = window_w_vector(s);
             window_h = window_h_vector(s);
             
-            desp_w = (window_w_maxmin(2)-window_w)/2-1;
-            desp_h = (window_h_maxmin(2)-window_h)/2-1;
+            adjusted_i = i+floor((window_w_maxmin(2)-window_w)/2);
+            adjusted_j = j+floor((window_h_maxmin(2)-window_h)/2);
             
             % Compute window's filling rate
-            window = im(i+desp_h:i+desp_h+window_h-1,j+desp_w:j+desp_w+window_w-1);
-            window_fr = sum(window(:))/(window_h*window_w); 
+            window = im(adjusted_i:adjusted_i+window_h-1,adjusted_j:adjusted_j+window_w-1);
+            window_fr = sum(window(:))/(window_h*window_w);
             
             if window_fr<filling_ratio
                 break
@@ -34,20 +34,22 @@ for i=1:jump_interval:rows-window_h_maxmin(2)+1
         if window_fr<filling_ratio && s>1
             window_w = window_w_vector(s-1);
             window_h = window_h_vector(s-1);
+            adjusted_i = i+floor((window_w_maxmin(2)-window_w)/2)-1;
+            adjusted_j = j+floor((window_h_maxmin(2)-window_h)/2)-1;
         end
         
         if  last_window_fr >= filling_ratio
             % Look for another similar window
-            sameWindow =    ([referenceWindows.x] - window_w*joining_threshold <= j ...
-                                & [referenceWindows.x] + window_w*joining_threshold >= j) ...
-                            & ([referenceWindows.y] - window_h*joining_threshold <= i ...
-                                & [referenceWindows.y] + window_h*joining_threshold >= i);
-            if max(sameWindow) == 0 
+            sameWindow =    ([referenceWindows.x] - window_w_maxmin(2)*joining_threshold <= adjusted_j ...
+                & [referenceWindows.x] + window_w_maxmin(2)*joining_threshold >= adjusted_j) ...
+                & ([referenceWindows.y] - window_h_maxmin(2)*joining_threshold <= adjusted_i ...
+                & [referenceWindows.y] + window_h_maxmin(2)*joining_threshold >= adjusted_i);
+            if max(sameWindow) == 0
                 % If there is no similar window add the new window as a new
                 % independent window to have as reference
                 window_idx = window_idx+1;
                 windowIdentifiers = [windowIdentifiers window_idx];
-                referenceWindows = [referenceWindows struct('x',j,'y',i,'w',window_w,'h',window_h)];
+                referenceWindows = [referenceWindows struct('x',adjusted_j,'y',adjusted_i,'w',window_w,'h',window_h)];
             else
                 % If ther is another similar window mark it to join them
                 % later
@@ -55,7 +57,7 @@ for i=1:jump_interval:rows-window_h_maxmin(2)+1
             end
             
             % Add the window to the window candidates
-            windowCandidates = [windowCandidates struct('x',j,'y',i,'w',window_w,'h',window_h)];
+            windowCandidates = [windowCandidates struct('x',adjusted_j,'y',adjusted_i,'w',window_w,'h',window_h)];
         end
     end
 end
@@ -63,13 +65,14 @@ end
 % Unify similar window candidates by the mean of their coordinates
 uniqueWindowIdentifiers = unique(windowIdentifiers);
 uniqueWindowCandidates = [];
-for idx = uniqueWindowIdentifiers
-    uniqueWindowCandidates = [uniqueWindowCandidates ...
-        struct('x',mean([windowCandidates(windowIdentifiers==idx).x]),...
-        'y',mean([windowCandidates(windowIdentifiers==idx).y]),...
-        'w',mean([windowCandidates(windowIdentifiers==idx).w]),...
-        'h',mean([windowCandidates(windowIdentifiers==idx).h]))];
+if ~isempty(uniqueWindowIdentifiers)
+    for idx = uniqueWindowIdentifiers
+        uniqueWindowCandidates = [uniqueWindowCandidates ...
+            struct('x',mean([windowCandidates(windowIdentifiers==idx).x]),...
+            'y',mean([windowCandidates(windowIdentifiers==idx).y]),...
+            'w',mean([windowCandidates(windowIdentifiers==idx).w]),...
+            'h',mean([windowCandidates(windowIdentifiers==idx).h]))];
+    end
 end
-
 end
 

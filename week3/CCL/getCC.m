@@ -1,4 +1,4 @@
-function [ CC ] = getCC( mask )
+function [ CC ] = getCC( mask, avgTotMinSize, avgTotMaxSize, totFillingRatio )
 % INPUT: 'mask' mask to obtain CCL
     CCL  = bwconncomp ( mask );
     CC   = regionprops( CCL,'basic' );

@@ -141,20 +141,22 @@ for x=1:k
                     FinalMask = imdilate(erodeMask,se);
                 case 4
                     %Calculate Opening with hole filling
+                    %Opening
                     erodeMask  = imerode (mask,se);
                     dilateMask = imdilate(erodeMask,se);
                     %Hole filling
-                    FinalMask  = imfill(dilateMask,'holes');
+                    FinalMask  = imfill  (dilateMask,'holes');
                 case 5
                     %Calculate Closing
                     dilateMask = imdilate(mask,se);
                     FinalMask  = imerode (dilateMask,se);
                 case 6
                     %Calculate Closing with hole filling
+                    %Closing
                     dilateMask = imdilate(mask,se);
                     erodeMask  = imerode (dilateMask,se);
                     %Hole filling
-                    FinalMask  = imfill(erodeMask,'holes');
+                    FinalMask  = imfill  (erodeMask,'holes');
                 case 7
                     %Calculate tophat
                     FinalMask = imtophat(mask,se);

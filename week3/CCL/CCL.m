@@ -39,7 +39,7 @@ function CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showIma
         tic; % Start timer
         % Read mask
         mask = imread(strcat(directory, files(i).name(1:size(files(i).name,2)-3), 'png'));
-        BB = getCC(mask)
+        BB = getCC(mask);
         save([strcat(directory,'gt/gt.',files(i).name(6:size(files(i).name,2)-3), 'mat')],'BB');
         if showImages
             figure;

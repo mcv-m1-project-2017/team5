@@ -35,7 +35,7 @@ for i=1:length(test_files)
             s = imHSV(:,:,2);
             v = imHSV(:,:,3);
             %Define Red and blue thresholds
-            hred = [350 20];
+            hred   = [350 20];
             hblueA = [180 250];
             hblueB = [210 300];
             sred = 0.45;

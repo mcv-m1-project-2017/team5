@@ -1,4 +1,4 @@
-function [pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw ] = CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showImages, performance)
+function [pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,windowFP] = CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showImages, performance)
 % INPUT: 'directory' directory of the files provided for training
 %        'performanceDirectory' directory to test
 %        'maxSize' Max signals size

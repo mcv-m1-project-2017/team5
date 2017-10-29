@@ -1,4 +1,4 @@
-function CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showImages, performance)
+function [pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw ] = CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showImages, performance)
 % INPUT: 'directory' directory of the files provided for training
 %        'performanceDirectory' directory to test
 %        'maxSize' Max signals size
@@ -38,16 +38,16 @@ function CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showIma
     for i=1:size(files,1)
         tic; % Start timer
         % Read mask
-        mask = imread(strcat(directory, files(i).name(1:size(files(i).name,2)-3), 'png'));
-        BB = getCC(mask, avgTotMinSize, avgTotMaxSize, totFillingRatio);
-        save([strcat(directory,'gt/gt.',files(i).name(6:size(files(i).name,2)-3), 'mat')],'BB');
+        mask   = imread(strcat(directory, files(i).name(1:size(files(i).name,2)-3), 'png'));
+        [CCL1] = getCC(mask, avgTotMinSize, avgTotMaxSize, totFillingRatio);
+        save([strcat(directory,'gt/gt.',files(i).name(6:size(files(i).name,2)-3), 'mat')],'CCL1');
         if showImages
             figure;
             imshow(mask);
             hold on
             %Show areas in image
-            for n=1:size(BB,1)
-                rectangle('Position',BB(n).BoundingBox,'EdgeColor','g','LineWidth',2)
+            for n=1:size(CC,1)
+                rectangle('Position',CCL1(n).BoundingBox,'EdgeColor','g','LineWidth',2)
             end
         end
         if performance
@@ -60,7 +60,7 @@ function CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showIma
             pixelTN = pixelTN + localPixelTN;
             % Accumulate object performance of the current image %%%%%%%%%%%%%%%%
             windowAnnotations = LoadAnnotations(strcat(performanceDirectory, '/gt/gt.', files(i).name(6:size(files(i).name,2)-3), 'txt'));
-            [localWindowTP, localWindowFN, localWindowFP] = PerformanceAccumulationWindow(BB, windowAnnotations);
+            [localWindowTP, localWindowFN, localWindowFP] = PerformanceAccumulationWindow(CCL1, windowAnnotations);
             windowTP = windowTP + localWindowTP;
             windowFN = windowFN + localWindowFN;
             windowFP = windowFP + localWindowFP;

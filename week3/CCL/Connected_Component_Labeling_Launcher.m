@@ -5,10 +5,10 @@ addpath(genpath('../..'))
 pDirectory = '../../DataSet/train';
 %The best algorithm was 4_3 ( Opening + Hole filling with sphere)
 directory = '../../DataSet/train/validation_split/YcbCrAndHSV_mask/12_3/';
-CCL( directory,pDirectory, maxSize, minSize, fillingRatio,false, true );
+[pPrecisionw1,pAccuracyw1,pSensitivityw1,pF1w1,pRecallw1 ] = CCL( directory,pDirectory, maxSize, minSize, fillingRatio,false, true );
 %Second Algorithm
 directory = '../../DataSet/train/validation_split/YcbCrAndHSV_mask/12_4/';
-CCL( directory,pDirectory, maxSize, minSize, fillingRatio,false, true );
+[pPrecisionw2,pAccuracyw2,pSensitivityw2,pF1w2,pRecallw2] = CCL( directory,pDirectory, maxSize, minSize, fillingRatio,false, true );
 %Third Algorithm
 directory = '../../DataSet/train/validation_split/YcbCrAndHSV_mask/12_5/';
-CCL( directory,pDirectory, maxSize, minSize, fillingRatio,false, true );
+[pPrecisionw3,pAccuracyw3,pSensitivityw3,pF1w3,pRecallw3 ] = CCL( directory,pDirectory, maxSize, minSize, fillingRatio,false, true );

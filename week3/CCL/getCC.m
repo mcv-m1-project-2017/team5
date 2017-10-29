@@ -21,7 +21,6 @@ function [ BB ] = getCC( mask, avgTotMinSize, avgTotMaxSize, totFillingRatio )
         %    BB = [BB,ActualBB];
         %end
         BB = [BB,ActualBB];
-        BB
     end
 end
 

@@ -1,4 +1,4 @@
-function CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showImages)
+function CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showImages, performance)
 % INPUT: 'directory' directory of the files provided for training
 %        'performanceDirectory' directory to test
 %        'maxSize' Max signals size
@@ -39,7 +39,7 @@ function CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showIma
         tic; % Start timer
         % Read mask
         mask = imread(strcat(directory, files(i).name(1:size(files(i).name,2)-3), 'png'));
-        BB = getCC(mask);
+        BB = getCC(mask, avgTotMinSize, avgTotMaxSize, totFillingRatio);
         save([strcat(directory,'gt/gt.',files(i).name(6:size(files(i).name,2)-3), 'mat')],'BB');
         if showImages
             figure;
@@ -50,33 +50,37 @@ function CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showIma
                 rectangle('Position',BB(n).BoundingBox,'EdgeColor','g','LineWidth',2)
             end
         end
-        % Accumulate pixel performance of the current image %%%%%%%%%%%%%%%%%
-        pixelAnnotation = imread(strcat(performanceDirectory, '/mask/', files(i).name(1:size(files(i).name,2)-3), 'png'))>0;
-        [localPixelTP, localPixelFP, localPixelFN, localPixelTN] = PerformanceAccumulationPixel(mask, pixelAnnotation);
-        pixelTP = pixelTP + localPixelTP;
-        pixelFP = pixelFP + localPixelFP;
-        pixelFN = pixelFN + localPixelFN;
-        pixelTN = pixelTN + localPixelTN;
-        % Accumulate object performance of the current image %%%%%%%%%%%%%%%%
-        windowAnnotations = LoadAnnotations(strcat(performanceDirectory, '/gt/gt.', files(i).name(6:size(files(i).name,2)-3), 'txt'));
-        [localWindowTP, localWindowFN, localWindowFP] = PerformanceAccumulationWindow(BB, windowAnnotations);
-        windowTP = windowTP + localWindowTP;
-        windowFN = windowFN + localWindowFN;
-        windowFP = windowFP + localWindowFP;
-        time =  time + toc; 
+        if performance
+            % Accumulate pixel performance of the current image %%%%%%%%%%%%%%%%%
+            pixelAnnotation = imread(strcat(performanceDirectory, '/mask/', files(i).name(1:size(files(i).name,2)-3), 'png'))>0;
+            [localPixelTP, localPixelFP, localPixelFN, localPixelTN] = PerformanceAccumulationPixel(mask, pixelAnnotation);
+            pixelTP = pixelTP + localPixelTP;
+            pixelFP = pixelFP + localPixelFP;
+            pixelFN = pixelFN + localPixelFN;
+            pixelTN = pixelTN + localPixelTN;
+            % Accumulate object performance of the current image %%%%%%%%%%%%%%%%
+            windowAnnotations = LoadAnnotations(strcat(performanceDirectory, '/gt/gt.', files(i).name(6:size(files(i).name,2)-3), 'txt'));
+            [localWindowTP, localWindowFN, localWindowFP] = PerformanceAccumulationWindow(BB, windowAnnotations);
+            windowTP = windowTP + localWindowTP;
+            windowFN = windowFN + localWindowFN;
+            windowFP = windowFP + localWindowFP;
+            time =  time + toc; 
+        end
     end
-    pPrecision   = pixelTP    / (pixelTP+pixelFP);
-    pAccuracy    = (pixelTP+pixelTN) / (pixelTP+pixelFP+pixelFN+pixelTN);
-    pSpecificity = pixelTN    / (pixelTN+pixelFP);
-    pSensitivity = pixelTP    / (pixelTP+pixelFN);
-    pF1          = 2*(pixelTP)/(2*pixelTP+pixelFN+pixelFP);
-    pRecall      = pixelTP    / (pixelTP+pixelFN);
+    if performance
+        pPrecision   = pixelTP    / (pixelTP+pixelFP);
+        pAccuracy    = (pixelTP+pixelTN) / (pixelTP+pixelFP+pixelFN+pixelTN);
+        pSpecificity = pixelTN    / (pixelTN+pixelFP);
+        pSensitivity = pixelTP    / (pixelTP+pixelFN);
+        pF1          = 2*(pixelTP)/(2*pixelTP+pixelFN+pixelFP);
+        pRecall      = pixelTP    / (pixelTP+pixelFN);
 
-    pPrecisionw   = windowTP    / (windowTP+windowFP);
-    pAccuracyw    = windowTP / (windowTP+windowFP+windowFN);
-    pSensitivityw = windowTP    / (windowTP+windowFN);
-    pF1w          = 2*(windowTP)/(2*windowTP+windowFN+windowFP);
-    pRecallw      = windowTP    / (windowTP+windowFN);
-    % Average time per frame
-    txf = time / length(files) ; 
+        pPrecisionw   = windowTP    / (windowTP+windowFP);
+        pAccuracyw    = windowTP / (windowTP+windowFP+windowFN);
+        pSensitivityw = windowTP    / (windowTP+windowFN);
+        pF1w          = 2*(windowTP)/(2*windowTP+windowFN+windowFP);
+        pRecallw      = windowTP    / (windowTP+windowFN);
+        % Average time per frame
+        txf = time / length(files) ; 
+    end
 end

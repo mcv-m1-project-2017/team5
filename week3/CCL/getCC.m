@@ -1,4 +1,4 @@
-function [ CC ] = getCC( mask, avgTotMinSize, avgTotMaxSize, totFillingRatio )
+function [ BB ] = getCC( mask, avgTotMinSize, avgTotMaxSize, totFillingRatio )
 % INPUT: 'mask' mask to obtain CCL
     CCL  = bwconncomp ( mask );
     CC   = regionprops( CCL,'basic' );
@@ -21,6 +21,7 @@ function [ CC ] = getCC( mask, avgTotMinSize, avgTotMaxSize, totFillingRatio )
         %    BB = [BB,ActualBB];
         %end
         BB = [BB,ActualBB];
+        BB
     end
 end
 

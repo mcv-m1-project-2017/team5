@@ -1,5 +1,10 @@
 function CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showImages)
-
+% INPUT: 'directory' directory of the files provided for training
+%        'performanceDirectory' directory to test
+%        'maxSize' Max signals size
+%        'minSize' Min signals size
+%        'fillingRatio' Filling ratio of week1
+%        'showImages' boolean if you want to show mask with CCL
     %directory does not exist
     if exist(directory, 'dir') ~= 7
         error('Directory not found');
@@ -34,28 +39,7 @@ function CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showIma
         tic; % Start timer
         % Read mask
         mask = imread(strcat(directory, files(i).name(1:size(files(i).name,2)-3), 'png'));
-        CCL  = bwconncomp ( mask );
-        CC   = regionprops( CCL,'basic' );
-        %Delete areas that are greater than area average or are less than area average
-        Signals = CC([CC.Area] >= avgTotMinSize & [CC.Area] <= avgTotMaxSize);
-        %BB structure [x, y, width, height]
-        BB = [];
-        for j=1:size(Signals,1)
-            ActualBB.BoundingBox  = Signals(j).BoundingBox;
-            ActualBB.x            = Signals(j).BoundingBox(1);
-            ActualBB.y            = Signals(j).BoundingBox(2);
-            ActualBB.w            = Signals(j).BoundingBox(3);
-            ActualBB.h            = Signals(j).BoundingBox(4);
-            ActualBB.Area         = Signals(j).Area;
-            %ActualBB.fillingRatio = sum(sum(mask(round(ActualBB.y : ActualBB.y+ActualBB.h), ...
-            %round(ActualBB.x : ActualBB.x+ActualBB.w)))) ...
-            %/ ActualBB.Area;
-            %if( ActualBB.fillingRatio >= totFillingRatio - totFillingRatio * 0.8 & ...
-            %    ActualBB.fillingRatio <= totFillingRatio + totFillingRatio * 0.8 )
-            %    BB = [BB,ActualBB];
-            %end
-            BB = [BB,ActualBB];
-        end
+        BB = getCC(mask)
         save([strcat(directory,'gt/gt.',files(i).name(6:size(files(i).name,2)-3), 'mat')],'BB');
         if showImages
             figure;

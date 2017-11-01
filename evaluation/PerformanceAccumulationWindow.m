@@ -23,8 +23,8 @@ function [TP,FN,FP] = PerformanceAccumulationWindow(detections, annotations)
     detectionsUsed = zeros(1,size(detections,1));
     annotationsUsed = zeros(1,size(annotations,1));
     TP = 0;
-    for i=1:size(annotations,1),
-        for j=1:size(detections,1),
+    for i=1:size(annotations,1)
+        for j=1:size(detections,1)
             if detectionsUsed(j)==0 && RoiOverlapping(annotations(i), detections(j)) > 0.5
                 TP = TP+1;
                 detectionsUsed(j) = 1;

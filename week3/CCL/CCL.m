@@ -40,15 +40,15 @@ function [pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,w
         tic; % Start timer
         % Read mask
         mask   = imread(strcat(directory, files(i).name(1:size(files(i).name,2)-3), 'png'));
-        [CCL1] = getCC(mask, avgTotMinSize, avgTotMaxSize, totFillingRatio);
-        save([strcat(directory,'gt/gt.',files(i).name(6:size(files(i).name,2)-3), 'mat')],'CCL1');
+        [windowCandidates] = getCC(mask, avgTotMinSize, avgTotMaxSize, totFillingRatio);
+        save([strcat(directory,'gt/gt.',files(i).name(6:size(files(i).name,2)-3), 'mat')],'windowCandidates');
         if showImages
             figure;
             imshow(mask);
             hold on
             %Show areas in image
-            for n=1:size(CC,1)
-                rectangle('Position',CCL1(n).BoundingBox,'EdgeColor','g','LineWidth',2)
+            for n=1:size(windowCandidates,1)
+                rectangle('Position',windowCandidates(n).BoundingBox,'EdgeColor','g','LineWidth',2)
             end
         end
         if performance
@@ -61,7 +61,7 @@ function [pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,w
             pixelTN = pixelTN + localPixelTN;
             % Accumulate object performance of the current image %%%%%%%%%%%%%%%%
             windowAnnotations = LoadAnnotations(strcat(performanceDirectory, '/gt/gt.', files(i).name(6:size(files(i).name,2)-3), 'txt'));
-            [localWindowTP, localWindowFN, localWindowFP] = PerformanceAccumulationWindow(CCL1, windowAnnotations);
+            [localWindowTP, localWindowFN, localWindowFP] = PerformanceAccumulationWindow(windowCandidates, windowAnnotations);
             windowTP = windowTP + localWindowTP;
             windowFN = windowFN + localWindowFN;
             windowFP = windowFP + localWindowFP;

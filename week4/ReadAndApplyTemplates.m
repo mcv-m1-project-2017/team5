@@ -1,4 +1,4 @@
-function [ output_args ] = ReadAndApplyTemplates( directory,performanceDirectory,showImages )
+function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,windowFP ] = ReadAndApplyTemplates( directory,performanceDirectory,showImages,method )
 % INPUT: 'directory' directory of the files provided for training
 %        'performanceDirectory' directory to test
 %        'showImages' boolean if you want to show mask with CCL
@@ -14,6 +14,10 @@ function [ output_args ] = ReadAndApplyTemplates( directory,performanceDirectory
 
     if exist (strcat(directory, 'gt' ), 'dir') ~= 7
         mkdir(strcat(directory, 'gt' ));
+    end
+    
+    if exist (strcat(directory, 'mat_',int2str(method),'_Templates' ), 'dir') ~= 7
+        mkdir(strcat(directory, 'mat_',int2str(method),'_Templates' ));
     end
     
     %Read All templates
@@ -46,11 +50,11 @@ function [ output_args ] = ReadAndApplyTemplates( directory,performanceDirectory
         % Read mask
         mask   = imread(strcat(directory, files(i).name(1:size(files(i).name,2)-3), 'png'));
         % Read windowsCandidates
-        windowCandidates = load(strcat(directory,'/gt/', files(i).name(1:size(files(i).name,2)-3), 'mat'));
+        windowCandidates = load(strcat(directory,'/mat_',int2str(method),'/', files(i).name(1:size(files(i).name,2)-3), 'mat'));
         % Apply Templates
         
         % Save new windowsCandidates
-        
+        save([strcat(directory,'mat_',int2str(method),'_Templates/',files(i).name(1:size(files(i).name,2)-3), 'mat')],'windowCandidates');
         if showImages
             figure;
             imshow(mask);

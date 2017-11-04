@@ -44,4 +44,15 @@ Introduction to Human and Computer Vision project
      * TASK 3: Run Launch_YcbCrAndHSVWithOpening.m
      
      * TASK 4: In week2/histogram_back_projection, run main.m
+     
+     WEEK 3:
+     * TASK 1: Run CCL.m
+     
+     * TASK 2: Run main.m
+     
+     * TASK 3: Run main.m
+     
+     * TASK 5: In Task5.m
+    
+    WEEK 4:
     

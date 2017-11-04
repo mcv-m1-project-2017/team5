@@ -17,8 +17,8 @@ function Templates = get_templates(directory,grayscale,showImages)
    
     %[typeA, typeB, ..., typeF]
     SignTypeIndex = 'A':'F';
-    signTypeFrequency = zeros(6,1);
-    signals           = zeros(250,250,3,6); 
+    signTypeFrequency = zeros(4,1);
+    signals           = zeros(250,250,3,4); 
     Templates         = [];
     for i=1:length(files)
         % Read annotations
@@ -32,8 +32,17 @@ function Templates = get_templates(directory,grayscale,showImages)
         for j=1:size(Signs,2)
             %Get signal type
             sIndex = SignTypeIndex==Signs{j};
+            sIndex = find(sIndex);
+            %B,C,D are the same type
+            if isequal(sIndex,3) | isequal(sIndex,4) | isequal(sIndex,5)
+                Index = 3;
+            elseif sIndex == 6
+                Index = 4;
+            else
+                Index = sIndex;
+            end
             %Add one to the frecuency
-            signTypeFrequency(sIndex) = signTypeFrequency(sIndex) + 1;
+            signTypeFrequency(Index) = signTypeFrequency(Index) + 1;
             %Get signal from image and mask
             img_signal  = img ( round(annotations(j).y : annotations(j).y+annotations(j).h)...
                               , round(annotations(j).x : annotations(j).x+annotations(j).w),:);
@@ -46,7 +55,7 @@ function Templates = get_templates(directory,grayscale,showImages)
             current_signal = double  (current_signal);
             %Resize image for a standar size
             current_signal = imresize(current_signal, [250 250]);
-            signals(:,:,:,sIndex) = signals(:,:,:,sIndex) + current_signal;
+            signals(:,:,:,Index) = signals(:,:,:,Index) + current_signal;
             if showImages
                 imshow(mask_signal);
                 figure; 
@@ -71,7 +80,7 @@ function Templates = get_templates(directory,grayscale,showImages)
             imshow(currentTemplate);
         end
         %Write template
-        imwrite(currentTemplate,strcat(directory, '/templates/Template_',SignTypeIndex(i),'.png'));
+        imwrite(currentTemplate,strcat(directory, '/templates/Template_',int2str(i),'.png'));
         Templates = [Templates currentTemplate];
     end
 end

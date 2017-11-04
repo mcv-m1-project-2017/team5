@@ -38,20 +38,21 @@ function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,
         % Read windowsCandidates
         windowCandidates = load(strcat(directory,'/mat_',int2str(method),'/', files(i).name(1:size(files(i).name,2)-3), 'mat'),'windowCandidates');
         % Apply Templates
+        bIsWindow = false(1,size(windowCandidates,2));
         for j=1:size(windowCandidates,2)
             mask_signal = mask( round(windowCandidates(j).windowCandidates.y : windowCandidates(j).windowCandidates.y+windowCandidates(j).windowCandidates.h)...
                               , round(windowCandidates(j).windowCandidates.x : windowCandidates(j).windowCandidates.x+windowCandidates(j).windowCandidates.w));
             mask_signal = imresize(mask_signal, [250 250]);
-            bIsWindow(j)=false;
-            for k=1:size(templates)
+            for k=1:size(templates,3)
                 if mask_signal | templates(:,:,k)
                     bIsWindow(j)=true;
                 end
             end
         end
+        finalWindowCandidates = [];
         for j=1:size(windowCandidates,2)
             if(bIsWindow(j))
-                finalWindowCandidates = windowCandidates(j);
+                finalWindowCandidates = [finalWindowCandidates,windowCandidates(j)];
             end
         end
         windowCandidates = finalWindowCandidates;
@@ -76,10 +77,12 @@ function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,
             pixelTN = pixelTN + localPixelTN;
             % Accumulate object performance of the current image %%%%%%%%%%%%%%%%
             windowAnnotations = LoadAnnotations(strcat(performanceDirectory, '/gt/gt.', files(i).name(6:size(files(i).name,2)-3), 'txt'));
-            [localWindowTP, localWindowFN, localWindowFP] = PerformanceAccumulationWindow(windowCandidates, windowAnnotations);
-            windowTP = windowTP + localWindowTP;
-            windowFN = windowFN + localWindowFN;
-            windowFP = windowFP + localWindowFP;
+            for j=1:size(windowCandidates,2)
+                [localWindowTP, localWindowFN, localWindowFP] = PerformanceAccumulationWindow(windowCandidates(j).windowCandidates, windowAnnotations);
+                windowTP = windowTP + localWindowTP;
+                windowFN = windowFN + localWindowFN;
+                windowFP = windowFP + localWindowFP;
+            end
             time =  time + toc; 
         end
     end

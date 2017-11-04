@@ -1,0 +1,2 @@
+%Launch getTemplates
+Templates = get_templates(directory,grayscale,showImages)

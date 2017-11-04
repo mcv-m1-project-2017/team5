@@ -1,6 +1,6 @@
-function Templates = get_templates(directory,grayscale,showImages)
+function signals = get_templates(directory,grayscale,showImages)
 % INPUT: 'directory' directory of the files provided for training
-%        'grayscale' Activate grayscale
+%        'type' Activate grayscale
 %        'showImages' boolean if you want to show mask with CCL
     %directory does not exist
     if exist(directory, 'dir') ~= 7
@@ -19,7 +19,6 @@ function Templates = get_templates(directory,grayscale,showImages)
     SignTypeIndex = 'A':'F';
     signTypeFrequency = zeros(6,1);
     signals           = zeros(250,250,3,6); 
-    Templates         = [];
     for i=1:length(files)
         % Read annotations
         [annotations, Signs] = LoadAnnotations(...
@@ -34,44 +33,40 @@ function Templates = get_templates(directory,grayscale,showImages)
             sIndex = SignTypeIndex==Signs{j};
             %Add one to the frecuency
             signTypeFrequency(sIndex) = signTypeFrequency(sIndex) + 1;
-            %Get signal from image and mask
+            %Show signal
+            imshow(mask(annotations(j).y : annotations(j).y+annotations(j).h, annotations(j).x : annotations(j).x+annotations(j).w)*255);
+            %Get signal 
             img_signal  = img ( round(annotations(j).y : annotations(j).y+annotations(j).h)...
                               , round(annotations(j).x : annotations(j).x+annotations(j).w),:);
             mask_signal = mask( round(annotations(j).y : annotations(j).y+annotations(j).h)...
                               , round(annotations(j).x : annotations(j).x+annotations(j).w));
-            %Multiply by mask
-            current_signal(:,:,1) = img_signal(:,:,1) .* uint8(mask_signal);
-            current_signal(:,:,2) = img_signal(:,:,2) .* uint8(mask_signal);
-            current_signal(:,:,3) = img_signal(:,:,3) .* uint8(mask_signal);
+            current_signal(:,:,1) = img_signal(:,:,1) .* mask_signal;
+            current_signal(:,:,2) = img_signal(:,:,2) .* mask_signal;
+            current_signal(:,:,3) = img_signal(:,:,3) .* mask_signal;
             current_signal = double  (current_signal);
-            %Resize image for a standar size
             current_signal = imresize(current_signal, [250 250]);
             signals(:,:,:,sIndex) = signals(:,:,:,sIndex) + current_signal;
             if showImages
-                imshow(mask_signal);
+                imshow(signal);
                 figure; 
                 imshow(img_signal);
             end
-            clear current_signal
         end
     end
     %For each template
-    for i=1:size(signals,4)
+    for i=1:size(signals,1)
         %calculate average
         signals(:,:,:,i) = signals(:,:,:,i) / signTypeFrequency(i);
         %Apply grayscale
         if grayscale
-            currentTemplate = rgb2gray(uint8(signals(:,:,:,i)));
-        else
-            currentTemplate = signals(:,:,:,i);
+            signals(:,:,:,i) = rgb2gray(uint8(signals(:,:,:,i)));
         end
-        %Show image
+        %Show images
         if showImages
             figure; 
-            imshow(currentTemplate);
+            imshow(signals(:,:,:,i));
         end
-        %Write template
-        imwrite(currentTemplate,strcat(directory, '/templates/Template_',SignTypeIndex(i),'.png'));
-        Templates = [Templates currentTemplate];
+        %Write templates
+        imwrite(signals(:,:,:,sIndex),strcat(directory, '/templates/Template_',SignTypeIndex(i),'.png'));
     end
 end

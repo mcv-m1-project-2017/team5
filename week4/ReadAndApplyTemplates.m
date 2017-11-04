@@ -2,23 +2,22 @@ function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,
 % INPUT: 'directory' directory of the files provided for training
 %        'performanceDirectory' directory to test
 %        'showImages' boolean if you want to show mask with CCL
-    %directory does not exist
-    %if exist(directory, 'dir') ~= 7
-    %    error('Directory not found');
-    %end
+    if exist(directory, 'dir') ~= 7
+        error('Directory not found');
+    end
 
     files = ListFiles(directory);
-    %if size(files,1) == 0
-    %    error('Directory is empty');
-    %end
+    if size(files,1) == 0
+        error('Directory is empty');
+    end
 
-    %if exist (strcat(directory, 'gt' ), 'dir') ~= 7
-    %    mkdir(strcat(directory, 'gt' ));
-    %end
+    if exist (strcat(directory, 'gt' ), 'dir') ~= 7
+        mkdir(strcat(directory, 'gt' ));
+    end
     
-    %if exist (strcat(directory, 'mat_',int2str(method),'_Templates' ), 'dir') ~= 7
-    %    mkdir(strcat(directory, 'mat_',int2str(method),'_Templates' ));
-    %end
+    if exist (strcat(directory, 'mat_',int2str(method),'_Templates' ), 'dir') ~= 7
+        mkdir(strcat(directory, 'mat_',int2str(method),'_Templates' ));
+    end
     
     %Read All templates
     templates_files = ListFiles(templatesDirectory);

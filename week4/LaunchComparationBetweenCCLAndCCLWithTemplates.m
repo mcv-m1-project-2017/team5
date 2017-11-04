@@ -6,7 +6,7 @@ templatesDirectory = '../DataSet/train/validation_split/templates/';
 [sFrequency ,maxSize ,minSize ,formFactor ,fillingRatio,sFrequencyPercent] = SignalCharacteristics(pDirectory);
 %The best algorithm was 12_8
 directory = '../DataSet/train/validation_split/YcbCrAndHSV_mask/12_8/';
-%[pPrecisionw1,pAccuracyw1,pSensitivityw1,pF1w1,pRecallw1,windowTP1,windowFN1,windowFP1 ] = CCL( directory,pDirectory, maxSize, minSize, fillingRatio,false, true,1 );
+[pPrecisionw1,pAccuracyw1,pSensitivityw1,pF1w1,pRecallw1,windowTP1,windowFN1,windowFP1 ] = CCL( directory,pDirectory, maxSize, minSize, fillingRatio,false, true,1 );
 [pPrecisionw2,pAccuracyw2,pSensitivityw2,pF1w2,pRecallw2,windowTP2,windowFN2,windowFP2 ] = ReadAndApplyTemplates(directory,pDirectory,templatesDirectory,false ,true,1);
 %Second Algorithm 12_3
 directory = '../DataSet/train/validation_split/YcbCrAndHSV_mask/12_3/';

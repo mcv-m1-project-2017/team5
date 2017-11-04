@@ -1,4 +1,4 @@
-function [pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,windowFP] = CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showImages, performance)
+function [pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,windowFP] = CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showImages, performance, method)
 % INPUT: 'directory' directory of the files provided for training
 %        'performanceDirectory' directory to test
 %        'maxSize' Max signals size
@@ -17,6 +17,10 @@ function [pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,w
 
     if exist (strcat(directory, 'gt' ), 'dir') ~= 7
         mkdir(strcat(directory, 'gt' ));
+    end
+    
+    if exist (strcat(directory, 'mat_',int2str(method) ), 'dir') ~= 7
+        mkdir(strcat(directory, 'mat_',int2str(method) ));
     end
 
     %Compute values averages
@@ -40,8 +44,15 @@ function [pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,w
         tic; % Start timer
         % Read mask
         mask   = imread(strcat(directory, files(i).name(1:size(files(i).name,2)-3), 'png'));
-        [windowCandidates] = getCC(mask, avgTotMinSize, avgTotMaxSize, totFillingRatio);
-        save([strcat(directory,'gt/gt.',files(i).name(6:size(files(i).name,2)-3), 'mat')],'windowCandidates');
+        switch(method)
+            case 1
+                [windowCandidates] = getCC(mask, avgTotMinSize, avgTotMaxSize, totFillingRatio);
+            case 2
+                [windowCandidates] = getCCMultiFilter(mask);
+            otherwise
+                error('Method is not valid');
+        end
+        save([strcat(directory,'mat_',int2str(method),'/',files(i).name(1:size(files(i).name,2)-3), 'mat')],'windowCandidates');
         if showImages
             figure;
             imshow(mask);

@@ -1,4 +1,4 @@
-function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,windowFP ] = ReadAndApplyTemplates( directory,performanceDirectory,templatesDirectory,showImages,performance,method )
+function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,windowFP ] = ReadAndApplyTemplates( directory,performanceDirectory,templatesDirectory,showImages,performance,method, maxSize, minSize, fillingRatio )
 % INPUT: 'directory' directory of the files provided for training
 %        'performanceDirectory' directory to test
 %        'showImages' boolean if you want to show mask with CCL
@@ -28,7 +28,18 @@ function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,
         currentTemplate = imread(strcat(templatesDirectory,templates_files(i).name(1:size(templates_files(i).name,2)-3),'png'));
         templates(:,:,i) = currentTemplate;
     end
-    
+    %Compute values averages
+    totMinSize      = 0;
+    totMaxSize      = 0;
+    totFillingRatio = 0;
+    for n=1:size(maxSize,2)
+        totMinSize      = totMinSize + minSize(n);
+        totMaxSize      = totMaxSize + maxSize(n);
+        totFillingRatio = totFillingRatio + fillingRatio(n);
+    end
+    totFillingRatio = totFillingRatio / size(fillingRatio,2);
+    avgTotMinSize   = totMinSize      / size(minSize     ,2);
+    avgTotMaxSize   = totMaxSize      / size(maxSize     ,2);
     pixelTP=0; pixelFN=0; pixelFP=0; pixelTN=0;
     windowTP=0; windowFN=0; windowFP=0;
     pPrecisionw = 0;pAccuracyw = 0; pSensitivityw = 0;pF1w = 0;pRecallw = 0;
@@ -36,44 +47,48 @@ function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,
     for i=1:size(files,1)
         tic; % Start timer
         % Read mask
-        mask   = imread(strcat(directory, files(i).name(1:size(files(i).name,2)-3), 'png'));
-        % Read windowsCandidates
-        load([strcat(directory,'/mat_',int2str(method),'/', files(i).name(1:size(files(i).name,2)-3), 'mat')],'-mat',['windowCandidates']);
-        windowCandidates
+        mask = imread(strcat(directory, files(i).name(1:size(files(i).name,2)-3), 'png'));
+        switch(method)
+            case 1
+                [windowCandidates] = getCC(mask, avgTotMinSize, avgTotMaxSize, totFillingRatio);
+            case 2
+                [windowCandidates] = getCCMultiFilter(mask);
+            otherwise
+                error('Method is not valid');
+        end
+        if showImages
+            figure;
+            imshow(mask);
+            hold on
+            %Show areas in image
+            for n=1:size(windowCandidates,2)
+                rectangle('Position',windowCandidates(:,n).BoundingBox,'EdgeColor','g','LineWidth',2)
+            end
+        end
         % Apply Templates
-        bIsWindow = false(1,size(windowCandidates,1));
-        for j=1:size(windowCandidates,1)
-            x  = double(windowCandidates(j).x);
-            y  = double(windowCandidates(j).y);
-            x1 = double(windowCandidates(j).x) + double(windowCandidates(j).w);
-            y1 = double(windowCandidates(j).y) + double(windowCandidates(j).h);            
-            mask_signal = mask(round(y:y1),round(x:x1));
+        trafficsign = false(1,size(windowCandidates,2));
+        for j=1:size(windowCandidates,2) 
+            mask_signal = imcrop(mask, windowCandidates(:,j).BoundingBox);
+            if(isempty(mask_signal))
+                continue
+            end
             mask_signal = imresize(mask_signal, [250 250]);
             for k=1:size(templates,3)
                 if mask_signal | templates(:,:,k)
-                    bIsWindow(j)=true;
+                    trafficsign(j)=true;
                 end
             end
             clear mask_signal
         end
         finalWindowCandidates = [];
-        for j=1:size(windowCandidates,1)
-            if(bIsWindow(j))
+        for j=1:size(windowCandidates,2)
+            if(trafficsign(j))
                 finalWindowCandidates = [finalWindowCandidates,windowCandidates(j)];
             end
         end
         windowCandidates = finalWindowCandidates;
         % Save new windowsCandidates
         save([strcat(directory,'mat_',int2str(method),'_Templates/',files(i).name(1:size(files(i).name,2)-3), 'mat')],'windowCandidates');
-        if showImages
-            figure;
-            imshow(mask);
-            hold on
-            %Show areas in image
-            for n=1:size(windowCandidates,1)
-                rectangle('Position',windowCandidates(n).BoundingBox,'EdgeColor','g','LineWidth',2)
-            end
-        end
         if performance
             % Accumulate pixel performance of the current image %%%%%%%%%%%%%%%%%
             pixelAnnotation = imread(strcat(performanceDirectory, '/mask/', files(i).name(1:size(files(i).name,2)-3), 'png'))>0;
@@ -84,12 +99,10 @@ function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,
             pixelTN = pixelTN + localPixelTN;
             % Accumulate object performance of the current image %%%%%%%%%%%%%%%%
             windowAnnotations = LoadAnnotations(strcat(performanceDirectory, '/gt/gt.', files(i).name(6:size(files(i).name,2)-3), 'txt'));
-            for j=1:size(windowCandidates,1)
-                [localWindowTP, localWindowFN, localWindowFP] = PerformanceAccumulationWindow(windowCandidates(j), windowAnnotations);
-                windowTP = windowTP + localWindowTP;
-                windowFN = windowFN + localWindowFN;
-                windowFP = windowFP + localWindowFP;
-            end
+            [localWindowTP, localWindowFN, localWindowFP] = PerformanceAccumulationWindow(windowCandidates, windowAnnotations);
+            windowTP = windowTP + localWindowTP;
+            windowFN = windowFN + localWindowFN;
+            windowFP = windowFP + localWindowFP;
             time =  time + toc; 
         end
     end

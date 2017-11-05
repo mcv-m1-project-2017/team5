@@ -58,8 +58,8 @@ function [pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,w
             imshow(mask);
             hold on
             %Show areas in image
-            for n=1:size(windowCandidates,1)
-                rectangle('Position',windowCandidates(n).BoundingBox,'EdgeColor','g','LineWidth',2)
+            for n=1:size(windowCandidates,2)
+                rectangle('Position',windowCandidates(:,n).BoundingBox,'EdgeColor','g','LineWidth',2)
             end
         end
         if performance

@@ -3,9 +3,12 @@ function [ BB ] = getCC( mask, avgTotMinSize, avgTotMaxSize, totFillingRatio )
     CCL  = bwconncomp ( mask );
     CC   = regionprops( CCL,'basic' );
     %Delete areas that are greater than area average or are less than area average
+    BB = [];
+    if(size(CC,1)==0)
+        return
+    end
     Signals = CC([CC.Area] >= avgTotMinSize & [CC.Area] <= avgTotMaxSize);
     %BB structure [x, y, width, height]
-    BB = [];
     for j=1:size(Signals,1)
         ActualBB.BoundingBox  = Signals(j).BoundingBox;
         ActualBB.x            = Signals(j).BoundingBox(1);

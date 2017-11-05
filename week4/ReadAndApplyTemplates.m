@@ -2,6 +2,8 @@ function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,
 % INPUT: 'directory' directory of the files provided for training
 %        'performanceDirectory' directory to test
 %        'showImages' boolean if you want to show mask with CCL
+%        'performance' boolean if you want to calculate performance
+%        'method' method to compare
     if exist(directory, 'dir') ~= 7
         error('Directory not found');
     end
@@ -36,25 +38,26 @@ function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,
         % Read mask
         mask   = imread(strcat(directory, files(i).name(1:size(files(i).name,2)-3), 'png'));
         % Read windowsCandidates
-        windowCandidates = load(strcat(directory,'/mat_',int2str(method),'/', files(i).name(1:size(files(i).name,2)-3), 'mat'),'windowCandidates');
+        load([strcat(directory,'/mat_',int2str(method),'/', files(i).name(1:size(files(i).name,2)-3), 'mat')],'-mat',['windowCandidates']);
+        windowCandidates
         % Apply Templates
-        bIsWindow = false(1,size(windowCandidates,2));
-        for j=1:size(windowCandidates,2)
-            mask_signal = mask( round( windowCandidates(j).windowCandidates.y :... 
-                                       windowCandidates(j).windowCandidates.y  ...
-                                     + windowCandidates(j).windowCandidates.h) ...
-                              , round( windowCandidates(j).windowCandidates.x :...
-                                       windowCandidates(j).windowCandidates.x  ...
-                                     + windowCandidates(j).windowCandidates.w));
+        bIsWindow = false(1,size(windowCandidates,1));
+        for j=1:size(windowCandidates,1)
+            x  = double(windowCandidates(j).x);
+            y  = double(windowCandidates(j).y);
+            x1 = double(windowCandidates(j).x) + double(windowCandidates(j).w);
+            y1 = double(windowCandidates(j).y) + double(windowCandidates(j).h);            
+            mask_signal = mask(round(y:y1),round(x:x1));
             mask_signal = imresize(mask_signal, [250 250]);
             for k=1:size(templates,3)
                 if mask_signal | templates(:,:,k)
                     bIsWindow(j)=true;
                 end
             end
+            clear mask_signal
         end
         finalWindowCandidates = [];
-        for j=1:size(windowCandidates,2)
+        for j=1:size(windowCandidates,1)
             if(bIsWindow(j))
                 finalWindowCandidates = [finalWindowCandidates,windowCandidates(j)];
             end
@@ -67,8 +70,8 @@ function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,
             imshow(mask);
             hold on
             %Show areas in image
-            for n=1:size(windowCandidates,2)
-                rectangle('Position',windowCandidates(n).windowCandidates.BoundingBox,'EdgeColor','g','LineWidth',2)
+            for n=1:size(windowCandidates,1)
+                rectangle('Position',windowCandidates(n).BoundingBox,'EdgeColor','g','LineWidth',2)
             end
         end
         if performance
@@ -81,8 +84,8 @@ function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,
             pixelTN = pixelTN + localPixelTN;
             % Accumulate object performance of the current image %%%%%%%%%%%%%%%%
             windowAnnotations = LoadAnnotations(strcat(performanceDirectory, '/gt/gt.', files(i).name(6:size(files(i).name,2)-3), 'txt'));
-            for j=1:size(windowCandidates,2)
-                [localWindowTP, localWindowFN, localWindowFP] = PerformanceAccumulationWindow(windowCandidates(j).windowCandidates, windowAnnotations);
+            for j=1:size(windowCandidates,1)
+                [localWindowTP, localWindowFN, localWindowFP] = PerformanceAccumulationWindow(windowCandidates(j), windowAnnotations);
                 windowTP = windowTP + localWindowTP;
                 windowFN = windowFN + localWindowFN;
                 windowFP = windowFP + localWindowFP;

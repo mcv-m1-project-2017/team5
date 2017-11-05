@@ -66,7 +66,7 @@ function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,
             end
         end
         % Apply Templates
-        trafficsign = false(1,size(windowCandidates,2));
+        finalWindowCandidates = [];
         for j=1:size(windowCandidates,2) 
             mask_signal = imcrop(mask, windowCandidates(:,j).BoundingBox);
             if(isempty(mask_signal))
@@ -74,17 +74,14 @@ function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,
             end
             mask_signal = imresize(mask_signal, [250 250]);
             for k=1:size(templates,3)
-                if mask_signal | templates(:,:,k)
-                    trafficsign(j)=true;
+                temp = mask_signal & templates(:,:,k);
+                ones = sum(temp(:) == 1);
+                if ones >= 35000%250*250 = 62500
+                    finalWindowCandidates = [finalWindowCandidates,windowCandidates(:,j)];
+                    break
                 end
             end
             clear mask_signal
-        end
-        finalWindowCandidates = [];
-        for j=1:size(windowCandidates,2)
-            if(trafficsign(j))
-                finalWindowCandidates = [finalWindowCandidates,windowCandidates(j)];
-            end
         end
         windowCandidates = finalWindowCandidates;
         % Save new windowsCandidates

@@ -1,5 +1,5 @@
 function [BB] = HoughFiltering(BB, mask,im)
-plot_lines = 0;
+plot_lines = 1;
 plot_circles = 0;
 [ny,nx,~]=size(im);
 nAngles = 8;
@@ -78,10 +78,10 @@ for b=1:length(BB)
         close;
     end
     
-    signal_type(b,:) = [theta_peaks(b,1)&theta_peaks(b,2)&theta_peaks(b,4)
-        theta_peaks(b,1)&theta_peaks(b,2)&theta_peaks(b,4)
+    signal_type(b,:) = [theta_peaks(b,1)&theta_peaks(b,2)&theta_peaks(b,4)&~theta_peaks(b,3)
+        theta_peaks(b,1)&theta_peaks(b,2)&theta_peaks(b,4)&~theta_peaks(b,3)
         signal_type(b,3)
-        theta_peaks(b,1)&theta_peaks(b,3)
+        theta_peaks(b,1)&theta_peaks(b,3)&~theta_peaks(b,2)&~theta_peaks(b,4)
         ]';
 end
 

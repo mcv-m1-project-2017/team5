@@ -1,4 +1,4 @@
-function [pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,windowFP] = CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showImages, performance, method)
+function [pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,windowFP,pPrecision,pAccuracy,pSpecificity,pSensitivity,pF1,pRecall] = CCL(directory,performanceDirectory,maxSize,minSize,fillingRatio,showImages, performance, method)
 % INPUT: 'directory' directory of the files provided for training
 %        'performanceDirectory' directory to test
 %        'maxSize' Max signals size
@@ -48,7 +48,7 @@ function [pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,w
             case 1
                 [windowCandidates] = getCC(mask, avgTotMinSize, avgTotMaxSize, totFillingRatio);
             case 2
-                [windowCandidates] = getCCMultiFilter(mask);
+                [windowCandidates] = getCCMultiFilterWithoutImage(mask);
             otherwise
                 error('Method is not valid');
         end

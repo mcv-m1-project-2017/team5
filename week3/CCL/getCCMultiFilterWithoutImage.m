@@ -1,4 +1,4 @@
-function [ BB ] = getCCMultiFilter( mask)
+function [ BB ] = getCCMultiFilterWithoutImage( mask)
 % INPUT: 'mask' mask to obtain CCL
     CCL  = bwconncomp ( mask );
     CC   = regionprops( CCL,'basic' );

@@ -1,4 +1,4 @@
-function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,windowFP ] = ReadAndApplyTemplates( directory,performanceDirectory,templatesDirectory,showImages,performance,method, maxSize, minSize, fillingRatio )
+function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,windowFP,pPrecision,pAccuracy,pSpecificity,pSensitivity,pF1,pRecall ] = ReadAndApplyTemplates( directory,performanceDirectory,templatesDirectory,showImages,performance,method, maxSize, minSize, fillingRatio )
 % INPUT: 'directory' directory of the files provided for training
 %        'performanceDirectory' directory to test
 %        'showImages' boolean if you want to show mask with CCL
@@ -52,7 +52,7 @@ function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,
             case 1
                 [windowCandidates] = getCC(mask, avgTotMinSize, avgTotMaxSize, totFillingRatio);
             case 2
-                [windowCandidates] = getCCMultiFilter(mask);
+                [windowCandidates] = getCCMultiFilterWithoutImage(mask);
             otherwise
                 error('Method is not valid');
         end
@@ -84,6 +84,9 @@ function [ pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,
             clear mask_signal
         end
         windowCandidates = finalWindowCandidates;
+        cleanedMask = cleanMask(mask,windowCandidates);
+        %Save cleaned mask
+        imwrite(cleanedMask,strcat(directory, files(i).name(1:size(files(i).name,2)-3), 'png'));
         % Save new windowsCandidates
         save([strcat(directory,'mat_',int2str(method),'_Templates/',files(i).name(1:size(files(i).name,2)-3), 'mat')],'windowCandidates');
         if performance

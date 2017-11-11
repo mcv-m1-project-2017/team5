@@ -38,6 +38,8 @@ for t=6:6
     accuracy = zeros(length(lambdavalues),length(lambdavalues));
     specifity = zeros(length(lambdavalues),length(lambdavalues));
     sensitivity = zeros(length(lambdavalues),length(lambdavalues));
+    F1 = zeros(length(lambdavalues),length(lambdavalues));
+    Recall = zeros(length(lambdavalues),length(lambdavalues));
 
     i=1;
     for f=fileIndex(signType==t)'
@@ -75,12 +77,15 @@ for t=6:6
                     pixelFP = 1;
                 end
                 
-                [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity] = PerformanceEvaluationPixel(pixelTP, pixelFP, pixelFN, pixelTN);
+                [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity,pixelF1,pixelRecall] = PerformanceEvaluationPixel(pixelTP, pixelFP, pixelFN, pixelTN);
 
                 precision(l1==lambdavalues,l2==lambdavalues) = pixelPrecision + precision(l1==lambdavalues,l2==lambdavalues);
                 accuracy(l1==lambdavalues,l2==lambdavalues) = pixelAccuracy + accuracy(l1==lambdavalues,l2==lambdavalues);
                 specifity(l1==lambdavalues,l2==lambdavalues) = pixelSpecificity + specifity(l1==lambdavalues,l2==lambdavalues);
                 sensitivity(l1==lambdavalues,l2==lambdavalues) = pixelSensitivity + sensitivity(l1==lambdavalues,l2==lambdavalues);
+                F1(l1==lambdavalues,l2==lambdavalues) = pixelF1 + F1(l1==lambdavalues,l2==lambdavalues);
+                Recall(l1==lambdavalues,l2==lambdavalues) = pixelRecall + Recall(l1==lambdavalues,l2==lambdavalues);
+
                 
             end
         end
@@ -91,6 +96,8 @@ for t=6:6
     accuracy = accuracy / sum(signType==t);
     specifity = specifity/ sum(signType==t);
     sensitivity = sensitivity / sum(signType==t);
+    F1 = F1 / sum(signType==t);
+    Recall = Recall / sum(signType==t);
     
     save(strcat('results',int2str(t),'-',strrep(int2str(clock),' ','')),'precision','accuracy','specifity','sensitivity','lambdavalues','t','K','idx','C');
 end

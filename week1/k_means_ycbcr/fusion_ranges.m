@@ -1,7 +1,13 @@
 clear;clc;
 addpath(genpath('../..'))
-directory = '../../../DataSet/validation_split';
-outputdirectory = '../../../DataSet/validation_split/masksfinal/';
+directory = '../../DataSet/validation_split';
+outputdirectory = '../../DataSet/validation_split/masksfinal/';
+
+%directory does not exist
+if exist(directory, 'dir') ~= 7
+    error('Directory not found');
+end
+    
 
 % A
 minvaluesA =[102.2214  135.3313];
@@ -42,6 +48,8 @@ precision=0;
 accuracy=0;
 specifity=0;
 sensitivity=0;
+F1=0;
+Recall=0;
 
 for f=1:length(files)
     fprintf('%d..',f);
@@ -68,15 +76,19 @@ for f=1:length(files)
     if (pixelTP+pixelFP)==0
         pixelFP = 1;
     end
-    [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity] = PerformanceEvaluationPixel(pixelTP, pixelFP, pixelFN, pixelTN);
+    [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity,pixelF1,pixelRecall] = PerformanceEvaluationPixel(pixelTP, pixelFP, pixelFN, pixelTN);
     
     precision= pixelPrecision + precision;
     accuracy = pixelAccuracy + accuracy;
     specifity = pixelSpecificity + specifity;
     sensitivity = pixelSensitivity + sensitivity;
+    F1          = pixelF1 +F1;
+    Recall      = pixelRecall + Recall;
 end
 precision = precision / length(files);
 accuracy = accuracy / length(files);
 specifity = specifity/ length(files);
 sensitivity = sensitivity / length(files);
+F1 = F1 / length(files);
+Recall = Recall / length(files);
 fprintf('\n');

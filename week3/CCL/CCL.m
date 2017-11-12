@@ -39,6 +39,7 @@ function [pPrecisionw,pAccuracyw,pSensitivityw,pF1w,pRecallw,windowTP,windowFN,w
     pixelTP=0; pixelFN=0; pixelFP=0; pixelTN=0;
     windowTP=0; windowFN=0; windowFP=0;
     pPrecisionw = 0;pAccuracyw = 0; pSensitivityw = 0;pF1w = 0;pRecallw = 0;
+    pPrecision = 0; pAccuracy = 0; pSpecificity = 0; pSensitivity = 0; pF1 = 0; pRecall = 0;
     time=0;
     for i=1:size(files,1)
         tic; % Start timer
